@@ -4,6 +4,8 @@
 #include <menu.h>
 #include <string>
 #include <vector>
+#include <cstring>
+// include for strcmp
 
 using namespace std;
 

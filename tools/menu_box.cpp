@@ -15,7 +15,9 @@ menu_box::menu_box(vector<string> menu_list, int menu_width, int menu_height, in
               // 윈도우에서는 이 두 동작을 합처 Enter 동작을 하는것입니다..
               // "CR+LF 로 커서를 앞으로 보낸후 줄을 한줄 바꾼다 라고 이해하면 됨.
 
-    noecho();                             //화면에 입력된 문자를 echoing 하는 것을 종료, 아마 batch 파일의 echo off 와 동일한 기능을 하는듯.
+    // curs_set(0); //터미널 커서 숨기기
+
+    // noecho();                             //화면에 입력된 문자를 echoing 하는 것을 종료, 아마 batch 파일의 echo off 와 동일한 기능을 하는듯, 이를 사용하면 유저 입력을 해도 메아리 치듯이 유저의 입력이 보이지 않으므로 주의
     keypad(stdscr, TRUE);                 //입력 시 키보드 특수 키의 입력을 가능하게 설정하는 함수 (방향키, esc 등이 해당)
     init_pair(1, COLOR_RED, COLOR_BLACK); // ncurse 에서 사용 가능한 폰트 색상은 8가지 로 제한됩니다. 다만, 이들 컬러를 이용하여 폰트 전경색, 배경색 조합하여 다양한 표현을 할 수는 있습니다.
                                           // init_pair 함수는 이 색상 테이블을 만들때 사용 하는 함수입니다. 일종의 폰트 색상 팔레트로 보시면 정확 할 듯 싶군요.
@@ -115,7 +117,8 @@ void menu_box::show_menu(string title)
     }
 
     /* 메뉴에 사용한 메모리를 전부 해제한다. */
-    release_menu_resource();
+    // 해제의 경우 어짜피 소멸자에서 이루어지므로 두번 delete 하지 않도록 한다.
+    // release_menu_resource();
 }
 
 menu_box::~menu_box()

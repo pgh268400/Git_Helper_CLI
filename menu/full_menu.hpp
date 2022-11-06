@@ -1,3 +1,4 @@
 #pragma once
 
-void show_manage_directory();
+void show_directory_menu();
+void show_main_menu();
