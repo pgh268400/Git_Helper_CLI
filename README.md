@@ -1,7 +1,7 @@
 # 컴파일 명령어
 
 ```
-g++ *.cpp menu/*.cpp -o main -lmenu -lncurses && ./main
+g++ main.cpp menu/*.cpp tools/*.cpp -o main -lmenu -lncurses && ./main
 ```
 
 NCURSES 한글 출력
