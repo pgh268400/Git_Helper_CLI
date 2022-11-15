@@ -9,13 +9,21 @@
 
 using namespace std;
 
+// Ncurses Menu 를 쉽게 재활용하기 위한 Wrapper Class
 class menu_box
 {
 public:
     menu_box(vector<string> menu_list, int menu_width, int menu_height, int menu_starty, int menu_startx, void (*menu_handler)(const char *name));
     ~menu_box();
     void show_menu(string title);
+    void set_active_git(string name);
     void release_menu_resource();
+
+    // 현재 활성화된 git 디렉토리 경로
+    // 전 객체가 공유해야 하므로 static 키워드로 설정
+    // 또 static 은 외부에서 또 정의를 해줘야 한다지만,
+    // C++ 17부터 inline 키워드를 주면 이런 문제없이 할 수 있다고 함 (뭐 이리 힘드노? ㅡㅡ)
+    inline static string active_git_dir;
 
 private:
     // Member Function

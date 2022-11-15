@@ -4,6 +4,7 @@
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 menu_box::menu_box(vector<string> menu_list, int menu_width, int menu_height, int menu_starty, int menu_startx, void (*handler)(const char *name))
+    : menu_lst(menu_list), menu_width(menu_width), menu_height(menu_height), start_y(menu_starty), start_x(menu_startx), menu_handler(handler)
 {
     /* ncurses 초기화 */
     initscr(); //필수. curses를 위한 전체 화면을 초기화
@@ -24,13 +25,7 @@ menu_box::menu_box(vector<string> menu_list, int menu_width, int menu_height, in
                                           // 하나만 예를 들어 보자면, init_pair(1, COLOR_RED, COLOR_BLACK); 의 경우 팔레트 넘버 '1'로서 폰트의 전경색(Fore ground color)은 적색으로 그리고 배경색(Back ground color)은 검정색으로 선언 하고 있습니다.
                                           // 만들 수 있는 팔레트의 최대(MAX) 갯수는 해 보지 않아서 모르겠습니다
 
-    // 값 초기화
-    menu_lst = menu_list;
-    menu_width = menu_width;
-    menu_height = menu_height;
-    start_y = menu_starty;
-    start_x = menu_startx;
-    menu_handler = handler;
+    // 참고 : 멤버 변수 초기화는 이미 초기화 리스트에서 진행됨.
 
     /* 아이템 동적할당, 대입 */
     n_choices = menu_lst.size();
@@ -81,6 +76,11 @@ void menu_box::show_menu(string title)
     mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
     mvwhline(my_menu_win, 2, 1, ACS_HLINE, title_width);
     mvwaddch(my_menu_win, 2, title_width - 1, ACS_RTEE);
+
+    if (active_git_dir == "")
+        active_git_dir = "NULL";
+
+    mvprintw(LINES - 3, 0, " Active Git : %s", active_git_dir.c_str());
     mvprintw(LINES - 2, 0, " Esc to exit");
 
     // 반드시 어떤 출력을 수행하였으면 refresh()를 수행해주도록 해야 합니다.
@@ -121,11 +121,24 @@ void menu_box::show_menu(string title)
     // release_menu_resource();
 }
 
+// 현재 활성화된 Git 디렉토리 설정 & 출력
+void menu_box::set_active_git(string name)
+{
+    if (name == "")
+        active_git_dir = "NULL";
+    else
+        active_git_dir = name;
+
+    mvprintw(LINES - 3, 0, "Active Git : %s", active_git_dir.c_str());
+    refresh();
+}
+
 menu_box::~menu_box()
 {
     release_menu_resource();
 }
 
+// RAII 원칙
 void menu_box::release_menu_resource()
 {
     unpost_menu(my_menu);
