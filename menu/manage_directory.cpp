@@ -162,8 +162,6 @@ void add_dir_for_version_control()
             // string path = "test\n";
             write(fd, str, strlen(str));
             write(fd, "\n", 1);
-
-            
         }
         else if (git_output.find("Reinitialized") != string::npos)
         {
