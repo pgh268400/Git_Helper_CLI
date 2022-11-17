@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <list>
+#include "../tools/git.hpp"
 
 static void menu_handler(const char *name);
 
@@ -13,8 +14,7 @@ static void menu_handler(const char *name);
 static vector<string> menus = {"Show Managed Directory", "Active Working Directory", "Add Directory for Version Control", "Remove Directory from Version Control", "Back", ""};
 menu_box directory_menu(menus, 50, 9, 4, 4, menu_handler);
 
-// main.cpp의 전역 변수 git_list 참조
-extern list<string> git_list;
+extern git git_manager;
 
 void show_directory_menu()
 {
@@ -23,6 +23,8 @@ void show_directory_menu()
 
 void show_managed_dir()
 {
+    list<string> git_list = git_manager.get_git_list();
+
     erase();
     // 화면 중심으로 좌표 이동
     int start_y = 3;
@@ -31,6 +33,16 @@ void show_managed_dir()
     printw("< Show Managed Directory >");
     start_y += 1;
     move(start_y, start_x);
+    if (git_list.size() == 0)
+    {
+        move(start_y, start_x - 9);
+        printw("There is no directory for version control.");
+        refresh();
+        getch();
+        show_directory_menu();
+        return;
+    }
+
     // git_list의 내용을 순회하면서 출력한다. (반복자 사용)
     for (auto it = git_list.begin(); it != git_list.end(); it++)
     {
@@ -151,17 +163,7 @@ void add_dir_for_version_control()
             mid_y += 1;
             mvprintw(mid_y, 0, "Write information to a file...");
 
-            // git_info.txt 열고 APPEND 모드로 파일쓰기
-            int fd = open("./settings/git_info.txt", O_WRONLY | O_APPEND);
-            if (fd == -1)
-            {
-                perror("open");
-                exit(1);
-            }
-            // write
-            // string path = "test\n";
-            write(fd, str, strlen(str));
-            write(fd, "\n", 1);
+            git_manager.add_git_list(str);
         }
         else if (git_output.find("Reinitialized") != string::npos)
         {

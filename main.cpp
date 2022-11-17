@@ -13,14 +13,13 @@ void load_git_list();
 
 //끝에 NULL terminate 문자열은 String에서 "" 로 적으면 알아서 c_str이 NULL로 변환
 static vector<string> menus = {"Manage Directory", "Version Control", "About Git", "Exit", ""};
-menu_box main_menu(menus, 50, 7, 4, 4, menu_handler);
+menu_box main_menu(menus, 50, 8, 4, 4, menu_handler);
 
-// C++ STL에서 제공하는 연결 리스트(list)를 활용, 현재 프로그램에서 관리하는 git 디렉토리를 저장
-// 전역변수로서 모든 메뉴에서 공유하는 객체
-list<string> git_list;
+string git_info_dir = "./settings/git_info.txt";
+string git_active_dir = "./settings/git_active.txt";
 
-//실제로 프로그램에서 활성화된 git 디렉토리
-string git_active;
+// 현재 프로그램에서 GIT에 관련된 파일 & 정보를 관리하는 객체
+git git_manager(git_info_dir, git_active_dir);
 
 int main()
 {
@@ -30,58 +29,8 @@ int main()
 
 void load_git_list()
 {
-    // 1. git_list에 데이터 담기.
-    // git_info.txt에 저장된 내용을 파일에서 읽어온다.
-    int fd = open("./settings/git_info.txt", O_RDONLY);
-    if (fd == -1)
-    {
-        perror("open() error!");
-        exit(-1);
-    }
-
-    // 파일에서 읽어온 내용을 저장할 버퍼
-    char buf[1024] = {
-        0,
-    };
-
-    int len = 0;
-
-    // 파일에서 읽어온 내용을 buf에 저장하고, 읽어온 길이를 len에 저장
-    // 기본적으로 read를 계속 호출할때마다 파일의 offset이 증가하므로, 0을 반환할때까지 While을 돌리면서 버퍼에 저장하고 읽으면
-    // 모든 파일의 내용을 읽을 수 있다. (일반적인 스트림처럼 순차적으로 읽을 수 있음.)
-    // 참고 : 파일의 끝에 도달하면 0을 리턴
-    while ((len = read(fd, buf, sizeof(buf))) > 0)
-    {
-        // buf에 저장된 내용을 string으로 변환
-        string str(buf, len);
-
-        // string에서 개행문자를 기준으로 분리
-        size_t pos = 0;
-        string token;
-        while ((pos = str.find('\n')) != string::npos)
-        {
-            token = str.substr(0, pos);
-            git_list.push_back(token); // 분리된 내용을 git_list에 저장
-            str.erase(0, pos + 1);     // 0부터 pos 인덱스까지 문자열 삭제 (끝에 pos+1 은 포함안됨.)
-        }
-    }
-
-    // 2. git_active 에 데이터 담기
-    fd = open("./settings/git_active.txt", O_RDONLY);
-    if (fd == -1)
-    {
-        perror("open() error!");
-        exit(-1);
-    }
-
-    while ((len = read(fd, buf, sizeof(buf))) > 0)
-    {
-        // buf에 저장된 내용을 git_active 에 저장
-        git_active = string(buf, len);
-
-        // menu_box의 active_git_dir 변수 참조
-        menu_box::active_git_dir = git_active;
-    }
+    // menu_box의 active_git_dir 변수 참조
+    menu_box::active_git_dir = git_manager.get_active_dir();
 }
 
 void show_main_menu()

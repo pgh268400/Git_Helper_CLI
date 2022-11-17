@@ -62,7 +62,7 @@ git::git(string git_info_dir, string git_active_dir) : git_info_dir(git_info_dir
 // getter 함수이므로 끝에 const 키워드까지
 const string &git::get_active_dir() const
 {
-    return git_active_dir;
+    return git_active;
 }
 
 const list<string> &git::get_git_list() const

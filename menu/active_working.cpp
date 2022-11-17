@@ -5,12 +5,12 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include "../tools/git.hpp"
 
 using namespace std;
 static void menu_handler(const char *name);
 
-extern list<string> git_list;
-extern string git_active;
+extern git git_manager;
 
 void show_active_menu()
 {
@@ -20,6 +20,7 @@ void show_active_menu()
 
     //끝에 NULL terminate 문자열은 String에서 "" 로 적으면 알아서 c_str이 NULL로 변환
     // list<T> -> vector<T>로 변환
+    list<string> git_list = git_manager.get_git_list();
     vector<string> menus(git_list.begin(), git_list.end());
     menus.push_back("Back");
     menus.push_back("");
@@ -48,8 +49,10 @@ static void menu_handler(const char *name)
     }
     else
     {
-        // git_active에 선택한 디렉토리를 저장
-        git_active = name;
+        // 현재 활성화된 git_active를 반영
+        git_manager.set_active_dir(name);
+
+        string git_active = git_manager.get_active_dir();
 
         // menu_box의 active_git_dir 변수 참조
         menu_box::active_git_dir = git_active;

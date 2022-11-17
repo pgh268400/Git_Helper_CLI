@@ -5,15 +5,18 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include "../tools/git.hpp"
 
 using namespace std;
 static void menu_handler(const char *name);
 
-extern list<string> git_list;
-extern string git_active;
+extern git git_manager;
 
 void show_remove_menu()
 {
+    // get git_list
+    list<string> git_list = git_manager.get_git_list();
+
     // git_list의 내용을 메뉴로 만들어서 동적으로 출력
     // 전역변수로 관리하면 스택 영역을 자주 사용하지 않아도 될탠데
     // 동적으로 읽어야 하기 때문에 지역변수로 매번 만들어서 출력해줘야함 ㅠㅠ
@@ -73,7 +76,10 @@ static void menu_handler(const char *name)
         if (strcmp(str, "y") == 0 || strcmp(str, "Y") == 0)
         {
             // git_list에서 str을 찾아서 삭제
-            git_list.remove(name);
+            git_manager.remove_git_list(name);
+
+            // get git_list
+            list<string> git_list = git_manager.get_git_list();
 
             // 현재 위치의 git_info.txt 파일을 unlock() 시스템콜을 이용해 삭제한다
             unlink("./settings/git_info.txt");
