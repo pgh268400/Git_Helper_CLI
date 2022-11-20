@@ -73,7 +73,7 @@ const list<string> &git::get_git_list() const
 // Git 디렉토리를 추가 / 삭제할때마다 매번 git_info 파일을 자동 업데이트 해준다.
 // 당연하지만 Git List도 같이 업데이트 됨.
 
-// 프로그램이 관리할 Git 디렉토리를 추가
+// 프로그램이 관리할 Git 디렉토리를 추가 (멤버 변수 수정, 파일 수정)
 void git::add_git_list(string git_dir)
 {
     // git_list에 값 추가
@@ -101,7 +101,7 @@ void git::add_git_list(string git_dir)
     }
 }
 
-// 관리중인 Git 디렉토리에서 삭제
+// 관리중인 Git 디렉토리에서 삭제 (멤버 변수 수정, 파일 수정)
 void git::remove_git_list(string git_dir)
 {
     // git_list에 값 삭제
@@ -127,10 +127,26 @@ void git::remove_git_list(string git_dir)
         write(fd, it->c_str(), it->length());
         write(fd, "\n", 1); // write시 널문자는 고려하지 않는듯? (널문자는 쓸필요 없으니깐)
     }
+
+    // 만약 삭제한 디렉토리가 현재 활성화된 디렉토리라면 활성화된 디렉토리를 비활성화 시킴.
+    if (git_active == git_dir)
+    {
+        set_active_dir("");
+    }
 }
 
-// 관리중인 Git 디렉토리를 변경
+// 관리중인 Git 디렉토리를 변경 (멤버 변수 수정, 파일 수정)
 void git::set_active_dir(string git_dir)
 {
     git_active = git_dir;
+    unlink(git_active_dir.c_str());
+
+    // git_active.txt 파일에 git_active 내용 저장
+    int fd = open(git_active_dir.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd == -1)
+    {
+        perror("open");
+        exit(1);
+    }
+    write(fd, git_active.c_str(), git_active.length());
 }

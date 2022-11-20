@@ -91,7 +91,7 @@ static void menu_handler(const char *name)
     // 2. Version Control
     else if (strcmp(name, menus[1].c_str()) == 0)
     {
-        // show_git_menu();
+        show_version_menu();
     }
     // 3. About Git
     else if (strcmp(name, menus[2].c_str()) == 0)

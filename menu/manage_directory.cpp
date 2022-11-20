@@ -84,6 +84,20 @@ void add_dir_for_version_control()
     /* print the message at the center of the screen */
     getstr(str);
 
+    // str을 String 타입으로 변환
+    string path = str;
+
+    string find_str = "~";
+
+    // ~기호를 홈 디렉토리로 변환
+    path.replace(path.find(find_str), find_str.length(), getenv("HOME"));
+
+    // str 내용 비우기
+    memset(str, 0, sizeof(str));
+
+    // str에 path 내용 반영
+    strcpy(str, path.c_str());
+
     erase();
 
     // 글자 전체 위치 위로 올리기

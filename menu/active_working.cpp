@@ -52,15 +52,9 @@ static void menu_handler(const char *name)
         // 현재 활성화된 git_active를 반영
         git_manager.set_active_dir(name);
 
-        string git_active = git_manager.get_active_dir();
-
         // menu_box의 active_git_dir 변수 참조
-        menu_box::active_git_dir = git_active;
+        menu_box::active_git_dir = git_manager.get_active_dir();
 
-        // git_active 파일을 열어서 git_active 변수 내용을 저장
-        int fd = open("./settings/git_active.txt", O_WRONLY);
-        write(fd, git_active.c_str(), git_active.length());
-        // 메뉴를 닫는다.
         show_directory_menu();
     }
 }

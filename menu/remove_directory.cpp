@@ -78,20 +78,8 @@ static void menu_handler(const char *name)
             // git_list에서 str을 찾아서 삭제
             git_manager.remove_git_list(name);
 
-            // get git_list
-            list<string> git_list = git_manager.get_git_list();
-
-            // 현재 위치의 git_info.txt 파일을 unlock() 시스템콜을 이용해 삭제한다
-            unlink("./settings/git_info.txt");
-
-            // git_list를 다시 git_info.txt에 저장한다
-            int fd = open("./settings/git_info.txt", O_RDWR | O_CREAT, 0644);
-            for (auto it = git_list.begin(); it != git_list.end(); it++)
-            {
-                write(fd, it->c_str(), it->length());
-                write(fd, "\n", 1);
-            }
-            close(fd);
+            // menu_box의 active_git_dir 변수 참조
+            menu_box::active_git_dir = git_manager.get_active_dir();
             show_remove_menu();
         }
         else
