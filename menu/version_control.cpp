@@ -24,29 +24,51 @@ void show_version_menu()
 // 메뉴에서 엔터칠 시 호출되는 함수
 static void menu_handler(const char *name)
 {
+    if (strcmp(name, "Back") == 0)
+    {
+        show_main_menu();
+        return;
+    }
+
+    string active_dir = git_manager.get_active_dir();
+    if (active_dir == "")
+    {
+        move(20, 0);
+        clrtoeol();
+        mvprintw(20, 0, " There is no Active Git Dir!!");
+        return;
+    }
+
     move(20, 0);
     clrtoeol();
     mvprintw(20, 0, "Item selected is : %s", name);
 
     // 선택한 메뉴에 따라서 다른 동작을 수행
 
+    // Git Status
     if (strcmp(name, menus[0].c_str()) == 0)
     {
+        git_manager.git_status();
+        show_version_menu();
     }
     else if (strcmp(name, menus[1].c_str()) == 0)
     {
+        git_manager.set_easy_commit();
+        show_version_menu();
     }
     else if (strcmp(name, menus[2].c_str()) == 0)
     {
+        git_manager.get_easy_commit();
+        show_version_menu();
     }
     else if (strcmp(name, menus[3].c_str()) == 0)
     {
+        git_manager.show_diff_unstaged();
+        show_version_menu();
     }
     else if (strcmp(name, menus[4].c_str()) == 0)
     {
-    }
-    else if (strcmp(name, "Back") == 0)
-    {
-        show_main_menu();
+        git_manager.show_diff_staged();
+        show_version_menu();
     }
 }

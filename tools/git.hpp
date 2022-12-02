@@ -15,6 +15,12 @@ public:
     void add_git_list(string git_dir);
     void remove_git_list(string git_dir);
 
+    void git_status();
+    void set_easy_commit(); //==Easy Commit
+    void get_easy_commit(); //==Easy Commit List
+    void show_diff_unstaged();
+    void show_diff_staged();
+
 private:
     // C++ STL에서 제공하는 연결 리스트(list)를 활용, 현재 프로그램에서 관리하는 git 디렉토리를 저장
     list<string> git_list;
